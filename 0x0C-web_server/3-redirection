@@ -1,16 +1,12 @@
 #!/usr/bin/env bash
-# script containing commands to automatically configure a Ubuntu machine
-sudo apt-get update -y
-sudo apt-get install nginx -y
-sudo ufw allow 'Nginx HTTP'
-echo "Hello World!" | sudo tee /var/www/html/index.html
-printf %s "server {
-             listen 80 default_server;
-	     listen [::]:80 default_server;
-	     root   /var/www/html;
-	     index  index.html index.htm;
-	     location /redirect_me {
-	              return 301 https://www.youtube.com/watch?v=QH2-TGUlwu4;
-	      }
-}" > /etc/nginx/sites-available/default
+# This script configures the nginx server so that /redirect_me is redirecting to
+# another page.
+
+sudo apt update
+sudo apt install nginx -y
+sudo ufw allow 22
+sudo ufw allow 80
+sudo ufw enable
+echo 'Holberton School' | sudo tee /var/www/html/index.nginx-debian.html > /dev/null
+sed -i '/listen 80 default_server/a rewrite ^/redirect_me https://www.youtube.com/watch?v=QH2-TGUlwu4 permanent;' /etc/nginx/sites-available/default
 sudo service nginx restart
