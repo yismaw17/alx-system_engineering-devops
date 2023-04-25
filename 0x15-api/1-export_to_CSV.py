@@ -1,22 +1,22 @@
 #!/usr/bin/python3
-"""
-Using https://jsonplaceholder.typicode.com REST API with a given imployee ID
-Records all tasks that are owned by this employee in CSV file.
-"""
+'''
+A script to export data in the CSV format.
+'''
+
 import csv
 import requests
 from sys import argv
 
-if __name__ == "__main__":
-    userID = argv[1]
-    user = requests.get("https://jsonplaceholder.typicode.com/users/{}".
-                        format(userID)).json()
-    todos = requests.get("https://jsonplaceholder.typicode.com/todos?userId={}"
-                         .format(userID)).json()
-    with open("{}.csv".format(userID), 'w', newline='') as csvfile:
+if __name__ == '__main__':
+    uid = argv[1]
+    url = "https://jsonplaceholder.typicode.com/users/{}".format(uid)
+    user = requests.get(url, verify=False).json()
+    url = "https://jsonplaceholder.typicode.com/todos?userId={}".format(
+        uid)
+    todo = requests.get(url, verify=False).json()
+    with open("{}.csv".format(uid), 'w', newline='') as csvfile:
         taskwriter = csv.writer(csvfile, quoting=csv.QUOTE_ALL)
-        for task in todos:
-            taskwriter.writerow([int(userID),
-                                 user.get('username'),
-                                 task.get('completed'),
-                                 task.get('title')])
+        for t in todo:
+            taskwriter.writerow([int(uid), user.get('username'),
+                                 t.get('completed'),
+                                 t.get('title')])
